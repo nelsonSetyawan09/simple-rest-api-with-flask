@@ -11,7 +11,7 @@ from resources.item import Item, ItemList
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:moliASroot09@localhost/test_flask'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:moliASroot09@localhost/test_flask'
 # when object change, sqlachemy not change too
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
