@@ -1,8 +1,6 @@
 import pymysql.cursors
 
-from flask_sqlalchemy import SQLAlchemy
-
-db = SQLAlchemy()
+from db import db
 
 class UserModel(db.Model):
     __tablename__='users'

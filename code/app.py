@@ -1,12 +1,13 @@
 from flask import Flask
 from flask_restful import Api
 from flask_jwt import JWT
-from flask_sqlalchemy import SQLAlchemy
+
 
 from security import authenticate, identity
 from resources.user import UserRegister
 from resources.item import Item, ItemList
-
+from resources.store import Store, StoreList
+from db import db
 
 
 app = Flask(__name__)
@@ -19,14 +20,12 @@ app.secret_key='citra_amba'
 api = Api(app) # make ease to Resource, get-post, get-delete, get-post-delete
 
 
+db.init_app(app)
 
-db = SQLAlchemy(app)
 
-
-# tidak jalan
-#@app.before_request
-#def create_tables():
-	#db.create_all()     # create table in database
+@app.before_first_request
+def create_tables():
+	db.create_all()     # create table in database
 
 # user yang terdaftar login:
     # http://127.0.0.1:5000/auth, method='POST' (otomatis route di buat oleh JWT)
@@ -42,14 +41,14 @@ jwt = JWT(app, authenticate, identity)
 
 # mirip routes folder di nodejs(maximilliam)
 api.add_resource(Item, '/item/<string:name>')  # http://127.0.0.1:5000/item/chair
+api.add_resource(Store, '/store/<string:name>')
 api.add_resource(ItemList, '/items')
+api.add_resource(StoreList, '/stores')
 api.add_resource(UserRegister, '/register')
 
 
-
-if __name__ =='__main()__':
-    app.run(port=5000)
-
+if __name__ == '__main__':
+	app.run(port=5001)
 
 #  export FLASK_APP=app.py
 # export FLASK_DEBUG=1

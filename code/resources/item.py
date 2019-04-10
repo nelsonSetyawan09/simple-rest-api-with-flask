@@ -8,12 +8,18 @@ class Item(Resource):
     parser = reqparse.RequestParser() # take request with reqparse
 
     # just take argument price, dan if have another argument, diabaikan
+    # jika tidak ada price argumentz, maka akan muncul pezan help
     parser.add_argument('price',
         type=float,
         required=True,
         help='field can not be blank!'
     )
 
+    parser.add_argument('store_id',
+        type=int,
+        required=True,
+        help='field store_id can not be blank!'
+    )
 
     # call first jwt_required before get request
     # postman : di header, pilih Authorization
@@ -26,21 +32,17 @@ class Item(Resource):
             return item.json()
         return {'message': 'item not found'}, 404
 
-
-
     def post(self, name):
         if ItemModel.find_by_name(name):  # Item.find_by_name(name)
             return {'message': f'An item with {name} already exists'}, 400 # 400 BAD REQUEST
 
-        # data = {'price': 190.9} (example)
+        # data = {'price': 190.9, store_id:2} (example)
         data = Item.parser.parse_args()  # return parser with 'json format/like dict' and just have 'price' key
-        # **data == data['price'], data['store_id']
-        item = ItemModel(name, data['price'])
+        item = ItemModel(name, data['price'], data['store_id'])
         try:
             item.save_update_item_to_db()
         except:
-            return {"message": "error, not insert item"},500
-
+            return {"message": "error, not insert item, may be store_id not found in stores table"},500
         return item.json(), 201    # 201 is created
 
     def put(self, name):
@@ -50,7 +52,7 @@ class Item(Resource):
         if item:
             item.price=data['price']
         else:
-            item = ItemModel(name, data['price'])
+            item = ItemModel(name, data['price'], data['store_id'])
         item.save_update_item_to_db()
         return item.json()
 
