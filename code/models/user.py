@@ -1,5 +1,3 @@
-import pymysql.cursors
-
 from db import db
 
 class UserModel(db.Model):
